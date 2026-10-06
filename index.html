@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DulceCuenta · Kit Reposteras</title>
+<meta name="description" content="Costeo de recetas, pedidos con anticipo y recordatorios por WhatsApp para reposteras. Funciona sin internet.">
+<meta name="theme-color" content="#c2416b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="DulceCuenta">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23c2416b'/%3E%3Cpath d='M14 40h36v10a4 4 0 0 1-4 4H18a4 4 0 0 1-4-4z' fill='%23fff'/%3E%3Cpath d='M14 40c0-8 8-12 18-12s18 4 18 12z' fill='%23ffd6e3'/%3E%3Ccircle cx='32' cy='20' r='5' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="manifest" id="manifestLink">
+<link rel="apple-touch-icon" id="appleIcon">
+<style>
+:root{
+  --bg:#faf6f4;--surface:#ffffff;--surface-2:#f4eeeb;--text:#2a1f1d;--muted:#7a6a66;
+  --line:#ece3df;--accent:#c2416b;--accent-ink:#ffffff;--accent-soft:#fbe4ec;--choco:#7b4a35;
+  --ok:#1f8a5b;--ok-soft:#dff3e9;--warn:#b7791f;--warn-soft:#fdf0d8;--bad:#c53030;--bad-soft:#fde2e2;
+  --shadow:0 1px 2px rgba(42,31,29,.06),0 6px 20px rgba(42,31,29,.06);
+  --radius:16px;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#131012;--surface:#1d181a;--surface-2:#272022;--text:#f5ecea;--muted:#a8979a;--line:#33292c;
+  --accent:#f06292;--accent-ink:#1a0d12;--accent-soft:#3a1f29;--choco:#d7a58b;
+  --ok:#4fd1a0;--ok-soft:#173328;--warn:#f6c26b;--warn-soft:#3a2e17;--bad:#fc8181;--bad-soft:#3b1d1d;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);color-scheme:dark;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#131012;--surface:#1d181a;--surface-2:#272022;--text:#f5ecea;--muted:#a8979a;--line:#33292c;
+    --accent:#f06292;--accent-ink:#1a0d12;--accent-soft:#3a1f29;--choco:#d7a58b;
+    --ok:#4fd1a0;--ok-soft:#173328;--warn:#f6c26b;--warn-soft:#3a2e17;--bad:#fc8181;--bad-soft:#3b1d1d;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent)}
+.hidden{display:none!important}
+header.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top))}
+.logo{width:38px;height:38px;border-radius:11px;background:var(--accent);display:grid;place-items:center;color:#fff;flex:none;overflow:hidden}
+.logo img{width:100%;height:100%;object-fit:cover}
+.brand{flex:1;min-width:0}
+.brand b{display:block;font-size:17px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand small{color:var(--muted);font-size:12.5px}
+.icon-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .2s}
+.icon-btn:active{transform:scale(.94)}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:24px;letter-spacing:-.02em;margin:4px 0 2px}
+h2{font-size:18px;margin:0 0 10px;letter-spacing:-.01em}
+h3{font-size:15px;margin:0 0 6px}
+.sub{color:var(--muted);margin:0 0 16px;font-size:14px}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (min-width:760px){.g-md-2{grid-template-columns:repeat(2,minmax(0,1fr))}.g-md-4{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+.card+.card{margin-top:12px}
+.grid>.card,.grid>.card+.card{margin-top:0}
+.stat{padding:14px}
+.stat small{color:var(--muted);font-size:12.5px;display:block}
+.stat b{font-size:22px;letter-spacing:-.02em}
+.row{display:flex;align-items:center;gap:10px}
+.row.wrap{flex-wrap:wrap}
+.spacer{flex:1}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;box-shadow:var(--shadow)}
+.item .main{flex:1;min-width:0}
+.item .t{font-weight:650}
+.item .m{color:var(--muted);font-size:13.5px}
+.item .r{text-align:right;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;background:var(--surface-2);color:var(--muted)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.warn{background:var(--warn-soft);color:var(--warn)}.pill.bad{background:var(--bad-soft);color:var(--bad)}.pill.acc{background:var(--accent-soft);color:var(--accent)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:600;text-decoration:none;color:var(--text);transition:transform .12s,background .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:0 6px 16px color-mix(in srgb,var(--accent) 30%,transparent)}
+.btn.wa{background:#1fa855;border-color:#1fa855;color:#fff}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,var(--line))}
+.btn.sm{min-height:36px;padding:6px 12px;font-size:14px;border-radius:10px}
+.btn.block{width:100%}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.fab{position:fixed;right:18px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:25;width:58px;height:58px;border-radius:18px;font-size:28px;padding:0}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px}
+label.f>span{display:block;margin-bottom:5px}
+.inp,select.inp,textarea.inp{width:100%;min-height:44px;padding:10px 12px;border-radius:11px;border:1px solid var(--line);background:var(--surface-2);font-size:16px;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s}
+.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.inp.err{border-color:var(--bad);box-shadow:0 0 0 3px var(--bad-soft)}
+.errmsg{color:var(--bad);font-size:12.5px;margin-top:4px;font-weight:600}
+.hint{color:var(--muted);font-size:12.5px;font-weight:400;margin-top:4px}
+.seg{display:flex;background:var(--surface-2);border-radius:12px;padding:4px;gap:4px;overflow-x:auto}
+.seg button{flex:1;border:0;background:transparent;padding:8px 10px;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.seg button.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs .in{max-width:620px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.tabs button{border:0;background:none;padding:9px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;font-weight:600;color:var(--muted);cursor:pointer}
+nav.tabs button svg{width:24px;height:24px}
+nav.tabs button.on{color:var(--accent)}
+.empty{text-align:center;color:var(--muted);padding:28px 12px}
+.empty .big{font-size:40px;margin-bottom:6px}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+table.t th,table.t td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+table.t th{color:var(--muted);font-weight:600;font-size:12.5px}
+table.t td.n,table.t th.n{text-align:right;white-space:nowrap}
+.breakdown div{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line);font-size:14.5px}
+.breakdown div:last-child{border-bottom:0}
+.breakdown .tot{font-weight:750;font-size:16px}
+.price-hero{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 60%,var(--choco)));color:#fff;border-radius:var(--radius);padding:16px;margin-top:12px}
+.price-hero small{opacity:.85}
+.price-hero b{font-size:28px;letter-spacing:-.02em;display:block}
+dialog{border:0;padding:0;border-radius:20px;background:var(--surface);color:var(--text);width:min(640px,calc(100vw - 20px));max-height:calc(100dvh - 30px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(20,12,14,.55);backdrop-filter:blur(2px)}
+.dlg-h{position:sticky;top:0;background:var(--surface);display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);z-index:2}
+.dlg-h h2{margin:0;flex:1;font-size:17px}
+.dlg-b{padding:16px}
+.dlg-f{position:sticky;bottom:0;background:var(--surface);display:flex;gap:10px;padding:12px 16px;border-top:1px solid var(--line)}
+.dlg-f .btn{flex:1}
+.line-row{display:grid;grid-template-columns:1fr 84px 92px 36px;gap:6px;align-items:start;margin-bottom:8px}
+.line-row .cost{grid-column:1/-1;font-size:12.5px;color:var(--muted);margin-top:-4px}
+.line-row .cost.bad{color:var(--bad);font-weight:600}
+.oline{display:grid;grid-template-columns:1fr 70px 1fr 36px;gap:6px;margin-bottom:8px}
+.x{width:36px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);cursor:pointer;color:var(--muted)}
+#toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:min(92vw,420px)}
+.toast{background:#231a1c;color:#fff;padding:11px 16px;border-radius:12px;font-size:14.5px;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:tin .25s ease;pointer-events:auto;display:flex;gap:8px;align-items:center}
+.toast.ok::before{content:"✓";color:#4fd1a0;font-weight:800}.toast.bad::before{content:"!";color:#fc8181;font-weight:800}
+@keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.bar{height:10px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.chip-day{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:16px 2px 8px}
+.banner{border-radius:14px;padding:12px 14px;background:var(--accent-soft);color:var(--text);font-size:14px;margin-bottom:12px}
+.banner.warn{background:var(--warn-soft)}
+.kbd{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:var(--surface-2);padding:2px 6px;border-radius:6px}
+.ticket-prev{background:#fff;color:#111;border-radius:12px;padding:14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;white-space:pre-wrap;border:1px dashed #ccc;max-width:320px;margin:0 auto}
+#printArea{display:none}
+  .rcpt{font-family:ui-monospace,Menlo,Consolas,monospace;color:#000}
+.rcpt.w58{width:48mm;margin:0 auto;font-size:9.5pt;line-height:1.3}
+.rcpt.a4{font-family:var(--font);font-size:11pt;max-width:170mm;margin:0 auto}
+.rcpt h1{font-size:13pt;margin:0 0 2mm;text-align:center}
+.rcpt.a4 h1{font-size:20pt;text-align:left}
+.rcpt .c{text-align:center}
+.rcpt hr{border:0;border-top:1px dashed #000;margin:2mm 0}
+.rcpt table{width:100%;border-collapse:collapse}
+.rcpt td{padding:1mm 0;vertical-align:top}
+.rcpt.a4 td,.rcpt.a4 th{padding:2mm 1mm;border-bottom:1px solid #ddd;text-align:left}
+.rcpt td.n,.rcpt th.n{text-align:right;white-space:nowrap}
+.rcpt .big{font-weight:800;font-size:110%}
+.rcpt img.lg{max-width:22mm;max-height:22mm;display:block;margin:0 auto 2mm}
+@media (max-width:420px){.line-row{grid-template-columns:1fr 70px 84px 36px}.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media print{
+  body{background:#fff!important;color:#000!important;padding:0!important}
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:block!important}
+}
+</style>
+<style id="pageStyle">@page{size:auto;margin:10mm}</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="logo" id="hdrLogo" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15h16v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M4 15c0-3 3.6-5 8-5s8 2 8 5"/><path d="M12 10V7"/><circle cx="12" cy="5" r="2"/></svg></div>
+    <div class="brand"><b id="hdrName">DulceCuenta</b><small id="hdrSub">Costeo y pedidos para reposteras</small></div>
+    <button class="icon-btn" id="btnTheme" title="Cambiar tema" aria-label="Cambiar tema"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>
+    <button class="icon-btn" id="btnSettings" title="Ajustes" aria-label="Ajustes"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </div>
+</header>
+
+<main>
+  <!-- HOY -->
+  <section id="v-hoy" data-view>
+    <div id="welcome" class="card hidden">
+      <h2>¡Bienvenida a DulceCuenta! 🍰</h2>
+      <p class="sub" style="margin-bottom:12px">Calcula cuánto te cuesta cada receta, a cuánto venderla y lleva tus pedidos con anticipo. Todo se guarda en este teléfono y funciona sin internet.</p>
+      <div class="row wrap"><button class="btn primary" id="btnDemo">Cargar ejemplo para probar</button><button class="btn" id="btnStart">Empezar desde cero</button></div>
+    </div>
+    <h1 id="hoyTitle">Hoy</h1>
+    <p class="sub" id="hoyDate"></p>
+    <div class="grid g2 g-md-4" id="hoyStats"></div>
+    <div class="chip-day">Entregas y recordatorios</div>
+    <div class="seg" id="remSeg" role="tablist">
+      <button data-r="0" class="on">Hoy</button><button data-r="1">Mañana</button><button data-r="3">En 3 días</button><button data-r="late">Atrasados</button>
+    </div>
+    <div class="list" id="remList" style="margin-top:12px"></div>
+  </section>
+
+  <!-- PEDIDOS -->
+  <section id="v-pedidos" data-view class="hidden">
+    <div class="row"><h1>Pedidos</h1><span class="spacer"></span><button class="btn primary sm" id="btnNewOrder">+ Nuevo</button></div>
+    <p class="sub">Anticipo, saldo y estado de cada pedido.</p>
+    <div class="row" style="margin-bottom:12px"><input class="inp" id="orderSearch" placeholder="Buscar cliente o producto…" aria-label="Buscar pedido"></div>
+    <div class="seg" id="orderSeg"><button data-s="activos" class="on">Activos</button><button data-s="entregado">Entregados</button><button data-s="cancelado">Cancelados</button><button data-s="todos">Todos</button></div>
+    <div class="list" id="orderList" style="margin-top:12px"></div>
+  </section>
+
+  <!-- RECETAS -->
+  <section id="v-recetas" data-view class="hidden">
+    <div class="row"><h1>Recetas</h1><span class="spacer"></span><button class="btn primary sm" id="btnNewRecipe">+ Nueva</button></div>
+    <p class="sub">Costo real por receta y por porción, con mano de obra, horno y empaque.</p>
+    <div class="list" id="recipeList"></div>
+  </section>
+
+  <!-- INSUMOS -->
+  <section id="v-insumos" data-view class="hidden">
+    <div class="row"><h1>Ingredientes</h1><span class="spacer"></span><button class="btn primary sm" id="btnNewIng">+ Nuevo</button></div>
+    <p class="sub">Lo que compras, cuánto trae y cuánto pagaste. Cambia el precio y todas tus recetas se recalculan.</p>
+    <div class="card" id="aiCard" style="margin-bottom:12px">
+      <div class="row"><div style="font-size:26px">⚙️</div><div class="main" style="flex:1"><h3 style="margin:0">Motor Inteligente</h3><div class="m hint" id="aiStatus">Opcional: toma foto a tu ticket del súper y actualiza precios solo.</div></div>
+      <button class="btn sm" id="btnAiScan">📷 Leer ticket</button></div>
+      <input type="file" id="ticketFile" accept="image/*" capture="environment" class="hidden">
+    </div>
+    <input class="inp" id="ingSearch" placeholder="Buscar ingrediente…" aria-label="Buscar ingrediente" style="margin-bottom:12px">
+    <div class="list" id="ingList"></div>
+  </section>
+
+  <!-- CUENTAS -->
+  <section id="v-cuentas" data-view class="hidden">
+    <h1>Cuentas del mes</h1>
+    <p class="sub">Ventas, costo y ganancia según la fecha de entrega (sin contar cancelados).</p>
+    <div class="row" style="margin-bottom:12px"><button class="btn sm" id="mPrev" aria-label="Mes anterior">‹</button><input type="month" class="inp" id="monthPick" style="max-width:200px"><button class="btn sm" id="mNext" aria-label="Mes siguiente">›</button></div>
+    <div class="grid g2 g-md-4" id="monthStats"></div>
+    <div class="card" style="margin-top:12px"><h2>Por semana</h2><div id="weekBars"></div></div>
+    <div class="card"><h2>Lo que más vendiste</h2><div id="topProducts"></div></div>
+    <p class="hint">El costo incluye ingredientes, tu mano de obra, horno y empaque, así que la ganancia ya es <b>después</b> de pagarte tu tiempo.</p>
+  </section>
+</main>
+
+<button class="btn primary fab hidden" id="fab" aria-label="Nuevo pedido">+</button>
+
+<nav class="tabs" aria-label="Secciones">
+  <div class="in">
+    <button data-tab="hoy" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Hoy</button>
+    <button data-tab="pedidos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>Pedidos</button>
+    <button data-tab="recetas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 15h16v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M4 15c0-3 3.6-5 8-5s8 2 8 5"/><path d="M12 10V6"/></svg>Recetas</button>
+    <button data-tab="insumos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 2h12l-1 6H7z"/><path d="M7 8l-2 14h14L17 8"/></svg>Insumos</button>
+    <button data-tab="cuentas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Cuentas</button>
+  </div>
+</nav>
+
+<!-- DIALOGS -->
+<dialog id="dlgIng"><form method="dialog" id="formIng" novalidate>
+  <div class="dlg-h"><h2 id="ingTitle">Ingrediente</h2><button type="button" class="icon-btn" data-close aria-label="Cerrar">✕</button></div>
+  <div class="dlg-b">
+    <label class="f"><span>Nombre</span><input class="inp" name="nombre" placeholder="Ej. Harina de trigo" maxlength="60"></label>
+    <div class="grid g3">
+      <label class="f"><span>Cantidad que trae</span><input class="inp" name="cantidad" type="number" inputmode="decimal" step="any" min="0" placeholder="1"></label>
+      <label class="f"><span>Unidad</span><select class="inp" name="unidad"></select></label>
+      <label class="f"><span>Precio pagado $</span><input class="inp" name="precio" type="number" inputmode="decimal" step="any" min="0" placeholder="0.00"></label>
+    </div>
+    <div class="banner" id="ingPerUnit" style="margin-top:2px">—</div>
+    <details><summary style="cursor:pointer;font-weight:600;margin-bottom:10px">Conversiones (opcional)</summary>
+      <p class="hint" style="margin-top:0">Llénalas si compras por peso pero mides en tazas o piezas (o al revés).</p>
+      <div class="grid g2">
+        <label class="f"><span>Gramos que pesa 1 taza</span><input class="inp" name="gTaza" type="number" inputmode="decimal" step="any" min="0" placeholder="Harina ≈ 125"></label>
+        <label class="f"><span>Gramos que pesa 1 pieza</span><input class="inp" name="gPieza" type="number" inputmode="decimal" step="any" min="0" placeholder="Huevo ≈ 50"></label>
+      </div>
+    </details>
+  </div>
+  <div class="dlg-f"><button type="button" class="btn danger hidden" id="ingDel">Eliminar</button><button type="submit" class="btn primary">Guardar</button></div>
+</form></dialog>
+
+<dialog id="dlgRec"><form method="dialog" id="formRec" novalidate>
+  <div class="dlg-h"><h2 id="recTitle">Receta</h2><button type="button" class="icon-btn" data-close aria-label="Cerrar">✕</button></div>
+  <div class="dlg-b">
+    <label class="f"><span>Nombre de la receta</span><input class="inp" name="nombre" placeholder="Ej. Pastel de chocolate 20 porciones" maxlength="70"></label>
+    <div class="grid g2">
+      <label class="f"><span>Rinde (porciones o piezas)</span><input class="inp" name="rinde" type="number" inputmode="numeric" step="1" min="1" placeholder="20"></label>
+      <label class="f"><span>Margen de ganancia %</span><input class="inp" name="margen" type="number" inputmode="decimal" step="any" min="0" max="90" placeholder="Usa el de Ajustes"></label>
+    </div>
+    <h3 style="margin-top:6px">Ingredientes</h3>
+    <div id="recLines"></div>
+    <button type="button" class="btn sm" id="recAddLine">+ Agregar ingrediente</button>
+    <h3 style="margin-top:18px">Tiempo y otros costos</h3>
+    <div class="grid g3">
+      <label class="f"><span>Tu trabajo (min)</span><input class="inp" name="minTrabajo" type="number" inputmode="numeric" min="0" step="1" placeholder="90"></label>
+      <label class="f"><span>Horno (min)</span><input class="inp" name="minHorno" type="number" inputmode="numeric" min="0" step="1" placeholder="45"></label>
+      <label class="f"><span>Empaque $</span><input class="inp" name="empaque" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></label>
+    </div>
+    <label class="f" style="margin-top:-4px"><span>El empaque es…</span><select class="inp" name="empaqueModo"><option value="receta">por toda la receta</option><option value="porcion">por cada porción/pieza</option></select></label>
+    <div id="recCalc"></div>
+  </div>
+  <div class="dlg-f"><button type="button" class="btn danger hidden" id="recDel">Eliminar</button><button type="submit" class="btn primary">Guardar</button></div>
+</form></dialog>
+
+<dialog id="dlgOrd"><form method="dialog" id="formOrd" novalidate>
+  <div class="dlg-h"><h2 id="ordTitle">Pedido</h2><button type="button" class="icon-btn" data-close aria-label="Cerrar">✕</button></div>
+  <div class="dlg-b">
+    <div class="grid g2">
+      <label class="f"><span>Cliente</span><input class="inp" name="cliente" placeholder="Nombre" maxlength="60" autocomplete="off"></label>
+      <label class="f"><span>WhatsApp del cliente</span><input class="inp" name="telefono" type="tel" inputmode="tel" placeholder="10 dígitos" maxlength="20"></label>
+    </div>
+    <div class="grid g2">
+      <label class="f"><span>Fecha de entrega</span><input class="inp" name="fecha" type="date"></label>
+      <label class="f"><span>Hora</span><input class="inp" name="hora" type="time"></label>
+    </div>
+    <h3>Productos</h3>
+    <div id="ordLines"></div>
+    <button type="button" class="btn sm" id="ordAddLine">+ Agregar producto</button>
+    <div class="grid g2" style="margin-top:14px">
+      <label class="f"><span>Envío / extras $</span><input class="inp" name="extra" type="number" inputmode="decimal" step="any" min="0" placeholder="0"></label>
+      <label class="f"><span>Anticipo recibido $</span><input class="inp" name="anticipo" type="number" inputmode="decimal" step="any" min="0" placeholder="0"></label>
+    </div>
+    <label class="f"><span>Estado</span><select class="inp" name="estado"><option value="pendiente">Pendiente</option><option value="preparacion">En preparación</option><option value="listo">Listo para entregar</option><option value="entregado">Entregado</option><option value="cancelado">Cancelado</option></select></label>
+    <label class="f"><span>Notas (decoración, sabor, dirección…)</span><textarea class="inp" name="notas" rows="2" maxlength="400"></textarea></label>
+    <div class="breakdown card" id="ordCalc" style="box-shadow:none"></div>
+  </div>
+  <div class="dlg-f"><button type="button" class="btn danger hidden" id="ordDel">Eliminar</button><button type="submit" class="btn primary">Guardar pedido</button></div>
+</form></dialog>
+
+<dialog id="dlgTicket">
+  <div class="dlg-h"><h2>Ticket del pedido</h2><button type="button" class="icon-btn" data-close aria-label="Cerrar">✕</button></div>
+  <div class="dlg-b">
+    <pre class="ticket-prev" id="ticketPrev"></pre>
+    <div class="grid g2" style="margin-top:14px">
+      <a class="btn wa" id="tkWa" target="_blank" rel="noopener">WhatsApp</a>
+      <button class="btn" id="tkCopy">Copiar texto</button>
+      <button class="btn" id="tkPrint58">Imprimir 58 mm</button>
+      <button class="btn" id="tkPrintA4">Imprimir / PDF A4</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="dlgSet"><form method="dialog" id="formSet" novalidate>
+  <div class="dlg-h"><h2>Ajustes</h2><button type="button" class="icon-btn" data-close aria-label="Cerrar">✕</button></div>
+  <div class="dlg-b">
+    <h3>Tu negocio</h3>
+    <label class="f"><span>Nombre del negocio</span><input class="inp" name="negocio" maxlength="50" placeholder="Ej. Dulces Mary"></label>
+    <div class="grid g2">
+      <label class="f"><span>Tu WhatsApp</span><input class="inp" name="telefono" type="tel" maxlength="20" placeholder="10 dígitos"></label>
+      <label class="f"><span>Logo (opcional)</span><input class="inp" name="logo" type="file" accept="image/*" style="padding:8px"></label>
+    </div>
+    <div class="row" style="margin:-4px 0 10px"><button type="button" class="btn sm ghost hidden" id="logoDel">Quitar logo</button></div>
+    <h3>Para calcular precios</h3>
+    <div class="grid g3">
+      <label class="f"><span>Tu hora de trabajo $</span><input class="inp" name="tarifaHora" type="number" inputmode="decimal" step="any" min="0"><div class="hint">Lo que quieres ganar por hora.</div></label>
+      <label class="f"><span>Gas/luz por hora de horno $</span><input class="inp" name="hornoHora" type="number" inputmode="decimal" step="any" min="0"><div class="hint">Estimado. Horno de gas casero ≈ $15–25.</div></label>
+      <label class="f"><span>Margen de ganancia %</span><input class="inp" name="margen" type="number" inputmode="decimal" step="any" min="0" max="90"><div class="hint">Sobre el precio de venta.</div></label>
+    </div>
+    <label class="f"><span>Redondear precio sugerido a</span><select class="inp" name="redondeo"><option value="1">$1</option><option value="5">$5</option><option value="10">$10</option><option value="0">No redondear</option></select></label>
+    <label class="f"><span>Mensaje al final del ticket</span><input class="inp" name="pie" maxlength="120" placeholder="¡Gracias por tu pedido!"></label>
+
+    <h3 style="margin-top:14px">⚙️ Motor Inteligente (opcional)</h3>
+    <p class="hint" style="margin-top:0">Pega tu propia clave de Gemini para leer fotos de tickets del súper. Se guarda solo en este teléfono, nunca en los respaldos. La app funciona completa sin esto.</p>
+    <label class="f"><span>Clave de Gemini</span><input class="inp" name="geminiKey" type="password" autocomplete="off" placeholder="AIza…"></label>
+    <div class="row wrap" style="margin-bottom:12px"><button type="button" class="btn sm" id="aiTest">Probar clave</button><button type="button" class="btn sm ghost" id="aiForget">Borrar clave</button><a class="btn sm ghost" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Sacar clave gratis</a></div>
+
+    <h3 style="margin-top:14px">Respaldo</h3>
+    <p class="hint" style="margin-top:0">Tus datos viven en este teléfono. Descarga un respaldo cada semana y guárdalo en tu Drive o WhatsApp.</p>
+    <div class="grid g2">
+      <button type="button" class="btn" id="bkJson">⬇ Respaldo completo (.json)</button>
+      <button type="button" class="btn" id="bkImport">⬆ Restaurar respaldo</button>
+      <button type="button" class="btn" id="bkCsvOrders">Pedidos (.csv)</button>
+      <button type="button" class="btn" id="bkCsvIng">Ingredientes (.csv)</button>
+    </div>
+    <input type="file" id="bkFile" accept="application/json,.json" class="hidden">
+    <button type="button" class="btn danger block" id="bkClear" style="margin-top:12px">Borrar todos los datos</button>
+    <p class="hint" style="text-align:center;margin-top:14px">DulceCuenta · Kit Reposteras v1.0</p>
+  </div>
+  <div class="dlg-f"><button type="submit" class="btn primary">Guardar ajustes</button></div>
+</form></dialog>
+
+<dialog id="dlgAi">
+  <div class="dlg-h"><h2>Precios del ticket</h2><button type="button" class="icon-btn" data-close aria-label="Cerrar">✕</button></div>
+  <div class="dlg-b" id="aiBody"></div>
+  <div class="dlg-f"><button type="button" class="btn" data-close>Cancelar</button><button type="button" class="btn primary" id="aiApply">Aplicar seleccionados</button></div>
+</dialog>
+
+<dialog id="dlgConfirm">
+  <div class="dlg-b"><h2 id="cfT">¿Seguro?</h2><p id="cfM" class="sub"></p><div id="cfExtra"></div></div>
+  <div class="dlg-f"><button type="button" class="btn" id="cfNo">Cancelar</button><button type="button" class="btn primary" id="cfYes">Sí</button></div>
+</dialog>
+
+<div id="toasts" aria-live="polite"></div>
+<div id="printArea"></div>
+<script>
+(function(){
+'use strict';
+/* ===================== Utilidades ===================== */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = v => { const n = parseFloat(String(v ?? '').replace(',', '.')); return isFinite(n) ? n : 0; };
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const fmt = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN', minimumFractionDigits:2, maximumFractionDigits:2});
+const money = v => fmt.format(isFinite(v) ? v : 0);
+const money0 = v => '$' + Math.round(v).toLocaleString('es-MX');
+const pad = n => String(n).padStart(2, '0');
+const ymd = d => d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+const todayStr = () => ymd(new Date());
+const addDays = (s, n) => { const [y,m,d] = s.split('-').map(Number); const dt = new Date(y, m-1, d); dt.setDate(dt.getDate()+n); return ymd(dt); };
+const parseD = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const dayDiff = s => Math.round((parseD(s) - parseD(todayStr())) / 86400000);
+const fechaLarga = s => s ? parseD(s).toLocaleDateString('es-MX', {weekday:'long', day:'numeric', month:'long'}) : '';
+const fechaCorta = s => s ? parseD(s).toLocaleDateString('es-MX', {weekday:'short', day:'numeric', month:'short'}) : '';
+const hora12 = h => { if(!h) return ''; const [H,M] = h.split(':').map(Number); const ap = H >= 12 ? 'pm' : 'am'; return ((H % 12) || 12) + ':' + pad(M) + ' ' + ap; };
+const cuando = s => { const d = dayDiff(s); return d === 0 ? 'hoy' : d === 1 ? 'mañana' : d === 2 ? 'pasado mañana' : 'el ' + fechaLarga(s); };
+
+/* ===================== Datos ===================== */
+const KEY = 'dulcecuenta.v1';
+const KEY_AI = 'dulcecuenta.geminiKey';
+const KEY_THEME = 'dulcecuenta.theme';
+const DEFAULT_CFG = { negocio:'', telefono:'', logo:'', tarifaHora:60, hornoHora:20, margen:40, redondeo:5, pie:'¡Gracias por tu pedido! 💕', geminiModel:'gemini-3.5-flash-lite' };
+let S = load();
+function blank(){ return { v:1, cfg:{...DEFAULT_CFG}, ingredientes:[], recetas:[], pedidos:[], folio:0, iniciado:false }; }
+function load(){
+  try { const raw = localStorage.getItem(KEY); if(!raw) return blank(); const d = JSON.parse(raw); return normalize(d); }
+  catch(e){ console.warn(e); return blank(); }
+}
+function normalize(d){
+  const b = blank();
+  if(!d || typeof d !== 'object') return b;
+  b.cfg = {...DEFAULT_CFG, ...(d.cfg || {})};
+  b.ingredientes = Array.isArray(d.ingredientes) ? d.ingredientes : [];
+  b.recetas = Array.isArray(d.recetas) ? d.recetas : [];
+  b.pedidos = Array.isArray(d.pedidos) ? d.pedidos : [];
+  b.folio = num(d.folio) || b.pedidos.length;
+  b.iniciado = !!d.iniciado || b.ingredientes.length > 0 || b.pedidos.length > 0;
+  return b;
+}
+function save(){
+  try { localStorage.setItem(KEY, JSON.stringify(S)); return true; }
+  catch(e){ toast('No se pudo guardar: memoria llena. Quita el logo o descarga un respaldo.', 'bad'); return false; }
+}
+
+/* ===================== Unidades ===================== */
+const UNITS = {
+  g:{d:'m', f:1, label:'g'}, kg:{d:'m', f:1000, label:'kg'},
+  ml:{d:'v', f:1, label:'ml'}, L:{d:'v', f:1000, label:'L'},
+  taza:{d:'v', f:240, label:'taza'}, cda:{d:'v', f:15, label:'cucharada'}, cdita:{d:'v', f:5, label:'cucharadita'},
+  pieza:{d:'p', f:1, label:'pieza'}
+};
+const unitOpts = sel => Object.keys(UNITS).map(u => `<option value="${u}"${u===sel?' selected':''}>${UNITS[u].label}</option>`).join('');
+/* Convierte qty de una unidad a otra, usando gramos/taza y gramos/pieza del ingrediente cuando cambia de tipo. */
+function convert(qty, from, to, ing){
+  const A = UNITS[from], B = UNITS[to];
+  if(!A || !B) return NaN;
+  let base = qty * A.f; // en g, ml o pieza
+  if(A.d !== B.d){
+    const dens = ing && num(ing.gTaza) > 0 ? num(ing.gTaza) / 240 : null; // g por ml
+    const gp = ing && num(ing.gPieza) > 0 ? num(ing.gPieza) : null;
+    let grams;
+    if(A.d === 'm') grams = base;
+    else if(A.d === 'v'){ if(!dens) return NaN; grams = base * dens; }
+    else { if(!gp) return NaN; grams = base * gp; }
+    if(B.d === 'm') base = grams;
+    else if(B.d === 'v'){ if(!dens) return NaN; base = grams / dens; }
+    else { if(!gp) return NaN; base = grams / gp; }
+  }
+  return base / B.f;
+}
+function needHint(from, to){
+  const a = UNITS[from]?.d, b = UNITS[to]?.d;
+  if(a === 'p' || b === 'p') return 'Falta “gramos que pesa 1 pieza” en el ingrediente';
+  return 'Falta “gramos que pesa 1 taza” en el ingrediente';
+}
+const ingById = id => S.ingredientes.find(i => i.id === id);
+const recById = id => S.recetas.find(r => r.id === id);
+function pricePer(ing){ // precio por 1 unidad de compra
+  const c = num(ing.cantidad); return c > 0 ? num(ing.precio) / c : 0;
+}
+function lineCost(line){
+  const ing = ingById(line.ingId);
+  if(!ing) return {cost:0, err:'Ingrediente eliminado'};
+  const q = convert(num(line.cantidad), line.unidad, ing.unidad, ing);
+  if(!isFinite(q)) return {cost:0, err:needHint(line.unidad, ing.unidad)};
+  return {cost: q * pricePer(ing), err:null};
+}
+
+/* ===================== Costeo ===================== */
+function roundUp(v){ const r = num(S.cfg.redondeo); if(!r) return Math.round(v*100)/100; return Math.ceil(v / r - 1e-9) * r; }
+function costRecipe(r){
+  let ingredientes = 0, errores = 0;
+  (r.items || []).forEach(l => { const c = lineCost(l); ingredientes += c.cost; if(c.err) errores++; });
+  const rinde = Math.max(1, num(r.rinde) || 1);
+  const manoObra = num(r.minTrabajo) / 60 * num(S.cfg.tarifaHora);
+  const horno = num(r.minHorno) / 60 * num(S.cfg.hornoHora);
+  const empaque = r.empaqueModo === 'porcion' ? num(r.empaque) * rinde : num(r.empaque);
+  const total = ingredientes + manoObra + horno + empaque;
+  const margenPct = (r.margen === '' || r.margen == null) ? num(S.cfg.margen) : num(r.margen);
+  const m = Math.min(Math.max(margenPct, 0), 90) / 100;
+  const porcion = total / rinde;
+  const precioPorcion = roundUp(porcion / (1 - m));
+  const precioReceta = roundUp(total / (1 - m));
+  return { ingredientes, manoObra, horno, empaque, total, porcion, rinde, margenPct, precioPorcion, precioReceta, errores };
+}
+
+/* ===================== UI básicos ===================== */
+function toast(msg, type='ok'){
+  const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg; t.setAttribute('role','status');
+  const host = $$('dialog[open]').pop() || document.body; const box = $('#toasts'); if(box.parentElement !== host) host.appendChild(box);
+  box.appendChild(t); setTimeout(() => { t.style.transition = 'opacity .3s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 320); }, 2600);
+}
+function openDlg(d){ if(typeof d.showModal === 'function') d.showModal(); else d.setAttribute('open',''); }
+function closeDlg(d){ if(typeof d.close === 'function') d.close(); else d.removeAttribute('open'); }
+$$('dialog').forEach(d => {
+  d.addEventListener('click', e => { if(e.target.closest('[data-close]')) closeDlg(d); if(e.target === d) closeDlg(d); });
+});
+function confirmar(titulo, msg, yes='Sí, continuar', extraHtml=''){
+  return new Promise(res => {
+    const d = $('#dlgConfirm'); $('#cfT').textContent = titulo; $('#cfM').textContent = msg; $('#cfYes').textContent = yes; $('#cfExtra').innerHTML = extraHtml;
+    const done = v => { $('#cfYes').onclick = $('#cfNo').onclick = null; d.onclose = null; closeDlg(d); res(v); };
+    $('#cfYes').onclick = () => done(true); $('#cfNo').onclick = () => done(false); d.onclose = () => res(false);
+    openDlg(d);
+  });
+}
+function setErr(input, msg){
+  input.classList.add('err');
+  let m = input.parentElement.querySelector('.errmsg'); if(!m){ m = document.createElement('div'); m.className = 'errmsg'; input.insertAdjacentElement('afterend', m); }
+  m.textContent = msg;
+}
+function clearErrs(form){ $$('.err', form).forEach(e => e.classList.remove('err')); $$('.errmsg', form).forEach(e => e.remove()); }
+async function copiar(txt){
+  try { await navigator.clipboard.writeText(txt); toast('Copiado al portapapeles'); }
+  catch(e){ const ta = document.createElement('textarea'); ta.value = txt; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); toast('Copiado al portapapeles'); }catch(_){ toast('No se pudo copiar', 'bad'); } ta.remove(); }
+}
+function waPhone(t){
+  let d = String(t || '').replace(/\D/g, '');
+  if(!d) return '';
+  if(d.length === 10) d = '52' + d;
+  else if(d.length === 13 && d.startsWith('521')) d = '52' + d.slice(3);
+  return d;
+}
+const waLink = (tel, txt) => { const p = waPhone(tel); return 'https://wa.me/' + (p || '') + '?text=' + encodeURIComponent(txt); };
+function download(name, content, type){
+  const blob = new Blob([content], {type}); const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+/* ===================== Tema ===================== */
+function applyTheme(){ const t = localStorage.getItem(KEY_THEME); if(t) document.documentElement.dataset.theme = t; else delete document.documentElement.dataset.theme; }
+$('#btnTheme').onclick = () => {
+  const isDark = document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  localStorage.setItem(KEY_THEME, isDark ? 'light' : 'dark'); applyTheme(); toast(isDark ? 'Modo claro' : 'Modo oscuro');
+};
+applyTheme();
+
+/* ===================== Navegación ===================== */
+let view = 'hoy';
+function go(v){
+  view = v; $$('[data-view]').forEach(s => s.classList.toggle('hidden', s.id !== 'v-' + v));
+  $$('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === v));
+  $('#fab').classList.toggle('hidden', !(v === 'hoy' || v === 'pedidos'));
+  render(); window.scrollTo({top:0});
+}
+$$('nav.tabs button').forEach(b => b.onclick = () => go(b.dataset.tab));
+
+/* ===================== Render general ===================== */
+function render(){
+  renderHeader();
+  if(view === 'hoy') renderHoy();
+  if(view === 'pedidos') renderPedidos();
+  if(view === 'recetas') renderRecetas();
+  if(view === 'insumos') renderInsumos();
+  if(view === 'cuentas') renderCuentas();
+}
+function renderHeader(){
+  $('#hdrName').textContent = S.cfg.negocio || 'DulceCuenta';
+  $('#hdrSub').textContent = S.cfg.negocio ? 'Costeo y pedidos' : 'Costeo y pedidos para reposteras';
+  const lg = $('#hdrLogo');
+  if(S.cfg.logo){ lg.innerHTML = `<img src="${esc(S.cfg.logo)}" alt="">`; }
+  else if(lg.querySelector('img')) lg.innerHTML = '<span style="font-weight:800">' + esc((S.cfg.negocio || 'D').trim().charAt(0).toUpperCase()) + '</span>';
+}
+
+/* ---------- Pedidos: cálculo ---------- */
+const ESTADOS = {pendiente:['Pendiente','warn'], preparacion:['En preparación','acc'], listo:['Listo','ok'], entregado:['Entregado',''], cancelado:['Cancelado','bad']};
+function orderTotals(o){
+  const sub = (o.items || []).reduce((a, l) => a + num(l.cantidad) * num(l.precio), 0);
+  const costo = (o.items || []).reduce((a, l) => a + num(l.cantidad) * num(l.costo), 0);
+  const total = sub + num(o.extra);
+  const anticipo = num(o.anticipo);
+  return { sub, costo, total, anticipo, saldo: Math.max(0, total - anticipo) };
+}
+const itemsText = o => (o.items || []).map(l => `${num(l.cantidad)} × ${l.nombre}`).join(', ');
+function reminderText(o){
+  const t = orderTotals(o); const neg = S.cfg.negocio || 'tu repostería';
+  let s = `Hola ${o.cliente} 👋, te escribe ${neg}. Te recuerdo que tu pedido (${itemsText(o)}) se entrega ${cuando(o.fecha)}${o.hora ? ' a las ' + hora12(o.hora) : ''}.`;
+  if(t.saldo > 0.009) s += ` El saldo pendiente es de ${money(t.saldo)}.`;
+  else s += ' Tu pedido ya está pagado ✅.';
+  s += ' ¿Me confirmas por favor? ¡Gracias! 🍰';
+  return s;
+}
+function ticketText(o){
+  const t = orderTotals(o); const L = [];
+  L.push('*' + (S.cfg.negocio || 'Mi repostería') + '*');
+  if(S.cfg.telefono) L.push('WhatsApp: ' + S.cfg.telefono);
+  L.push('Pedido ' + o.folio);
+  L.push('Cliente: ' + o.cliente);
+  L.push('Entrega: ' + fechaCorta(o.fecha) + (o.hora ? ', ' + hora12(o.hora) : ''));
+  L.push('------------------------');
+  (o.items || []).forEach(l => L.push(`${num(l.cantidad)} × ${l.nombre}  ${money(num(l.cantidad) * num(l.precio))}`));
+  if(num(o.extra)) L.push('Envío/extras  ' + money(num(o.extra)));
+  L.push('------------------------');
+  L.push('*Total: ' + money(t.total) + '*');
+  L.push('Anticipo: ' + money(t.anticipo));
+  L.push('*Saldo: ' + money(t.saldo) + '*');
+  if(o.notas) L.push('Notas: ' + o.notas);
+  if(S.cfg.pie) L.push('', S.cfg.pie);
+  return L.join('\n');
+}
+
+/* ---------- HOY ---------- */
+let remSel = '0';
+$$('#remSeg button').forEach(b => b.onclick = () => { remSel = b.dataset.r; $$('#remSeg button').forEach(x => x.classList.toggle('on', x === b)); renderHoy(); });
+function activos(){ return S.pedidos.filter(o => o.estado !== 'entregado' && o.estado !== 'cancelado'); }
+function renderHoy(){
+  $('#welcome').classList.toggle('hidden', S.iniciado);
+  $('#hoyDate').textContent = fechaLarga(todayStr()).replace(/^./, c => c.toUpperCase());
+  const act = activos(); const t0 = todayStr();
+  const hoy = act.filter(o => o.fecha === t0).length;
+  const semana = act.filter(o => { const d = dayDiff(o.fecha); return d >= 0 && d <= 6; }).length;
+  const porCobrar = act.reduce((a, o) => a + orderTotals(o).saldo, 0);
+  const mes = t0.slice(0, 7); const ms = monthStats(mes);
+  $('#hoyStats').innerHTML = [
+    ['Entregas hoy', hoy], ['Próximos 7 días', semana], ['Por cobrar', money0(porCobrar)], ['Ganancia del mes', money0(ms.ganancia)]
+  ].map(([k, v]) => `<div class="card stat"><small>${k}</small><b>${v}</b></div>`).join('');
+  let list;
+  if(remSel === 'late') list = act.filter(o => dayDiff(o.fecha) < 0);
+  else { const n = +remSel; list = act.filter(o => dayDiff(o.fecha) === n); }
+  list.sort((a, b) => (a.fecha + a.hora).localeCompare(b.fecha + b.hora));
+  const lbl = {'0':'hoy', '1':'mañana', '3':'en 3 días', 'late':'atrasados'}[remSel];
+  $('#remList').innerHTML = list.length ? list.map(o => orderCard(o, true)).join('') :
+    `<div class="empty"><div class="big">🧁</div>No hay entregas ${remSel === 'late' ? 'atrasadas' : 'para ' + lbl}.<br><button class="btn sm primary" style="margin-top:10px" data-act="new">+ Nuevo pedido</button></div>`;
+}
+function orderCard(o, remind){
+  const t = orderTotals(o); const [el, ec] = ESTADOS[o.estado] || ESTADOS.pendiente;
+  const d = dayDiff(o.fecha);
+  const late = d < 0 && o.estado !== 'entregado' && o.estado !== 'cancelado';
+  return `<div class="item" data-id="${o.id}">
+    <div class="main">
+      <div class="row" style="gap:6px;flex-wrap:wrap"><span class="t">${esc(o.cliente)}</span><span class="pill ${ec}">${el}</span>${late ? '<span class="pill bad">Atrasado</span>' : ''}</div>
+      <div class="m">${esc(itemsText(o))}</div>
+      <div class="m">📅 ${esc(fechaCorta(o.fecha))}${o.hora ? ' · ' + hora12(o.hora) : ''} · ${esc(o.folio)}</div>
+      <div class="row wrap" style="margin-top:8px;gap:6px">
+        ${remind ? `<a class="btn sm wa" data-wa="${o.id}" href="${esc(waLink(o.telefono, reminderText(o)))}" target="_blank" rel="noopener">Recordar por WhatsApp</a>` : ''}
+        <button class="btn sm" data-act="ticket" data-id="${o.id}">Ticket</button>
+        <button class="btn sm" data-act="edit-order" data-id="${o.id}">Editar</button>
+        ${o.estado !== 'entregado' && o.estado !== 'cancelado' ? `<button class="btn sm" data-act="deliver" data-id="${o.id}">✓ Entregado</button>` : ''}
+      </div>
+    </div>
+    <div class="r"><b>${money(t.total)}</b><div class="m">${t.saldo > 0.009 ? 'Saldo ' + money(t.saldo) : '<span style="color:var(--ok)">Pagado</span>'}</div></div>
+  </div>`;
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  const id = b.dataset.id; const act = b.dataset.act;
+  if(act === 'new') openOrder();
+  if(act === 'edit-order') openOrder(id);
+  if(act === 'ticket') openTicket(id);
+  if(act === 'deliver'){
+    const o = S.pedidos.find(x => x.id === id); if(!o) return;
+    const t = orderTotals(o);
+    if(t.saldo > 0.009){
+      const ok = await confirmar('Marcar como entregado', `Queda un saldo de ${money(t.saldo)}. ¿El cliente ya lo pagó?`, 'Sí, pagó todo');
+      if(ok) o.anticipo = t.total;
+    }
+    o.estado = 'entregado'; save(); render(); toast('Pedido entregado 🎉');
+  }
+  if(act === 'edit-rec') openRecipe(id);
+  if(act === 'dup-rec'){ const r = recById(id); if(r){ const c = JSON.parse(JSON.stringify(r)); c.id = uid(); c.nombre = r.nombre + ' (copia)'; S.recetas.push(c); save(); render(); toast('Receta duplicada'); } }
+  if(act === 'order-rec'){ openOrder(null, id); }
+  if(act === 'edit-ing') openIng(id);
+});
+
+/* ---------- PEDIDOS ---------- */
+let ordFilter = 'activos';
+$$('#orderSeg button').forEach(b => b.onclick = () => { ordFilter = b.dataset.s; $$('#orderSeg button').forEach(x => x.classList.toggle('on', x === b)); renderPedidos(); });
+$('#orderSearch').oninput = () => renderPedidos();
+function renderPedidos(){
+  const q = $('#orderSearch').value.trim().toLowerCase();
+  let list = S.pedidos.slice();
+  if(ordFilter === 'activos') list = list.filter(o => o.estado !== 'entregado' && o.estado !== 'cancelado');
+  else if(ordFilter !== 'todos') list = list.filter(o => o.estado === ordFilter);
+  if(q) list = list.filter(o => (o.cliente + ' ' + itemsText(o) + ' ' + o.folio + ' ' + (o.notas || '')).toLowerCase().includes(q));
+  list.sort((a, b) => ordFilter === 'activos' ? (a.fecha + a.hora).localeCompare(b.fecha + b.hora) : (b.fecha + b.hora).localeCompare(a.fecha + a.hora));
+  $('#orderList').innerHTML = list.length ? list.map(o => orderCard(o, o.estado !== 'entregado' && o.estado !== 'cancelado')).join('') :
+    `<div class="empty"><div class="big">📋</div>${S.pedidos.length ? 'No hay pedidos aquí.' : 'Aún no tienes pedidos.'}<br><button class="btn sm primary" style="margin-top:10px" data-act="new">+ Nuevo pedido</button></div>`;
+}
+$('#btnNewOrder').onclick = () => openOrder();
+$('#fab').onclick = () => openOrder();
+
+let editingOrder = null;
+function prodOptions(sel){
+  const opts = S.recetas.map(r => {
+    const c = costRecipe(r);
+    return `<option value="${r.id}|p"${sel === r.id + '|p' ? ' selected' : ''}>${esc(r.nombre)} · porción (${money0(c.precioPorcion)})</option>` +
+           `<option value="${r.id}|r"${sel === r.id + '|r' ? ' selected' : ''}>${esc(r.nombre)} · completo (${money0(c.precioReceta)})</option>`;
+  }).join('');
+  return `<option value="">— Elige —</option>${opts}<option value="libre"${sel === 'libre' ? ' selected' : ''}>Otro (escribir)</option>`;
+}
+function ordLineHtml(l){
+  const sel = l.recetaId ? l.recetaId + '|' + (l.modo || 'r') : (l.nombre ? 'libre' : '');
+  return `<div class="oline-wrap" style="margin-bottom:6px">
+    <div class="oline">
+      <select class="inp" data-k="prod" aria-label="Producto">${prodOptions(sel)}</select>
+      <input class="inp" data-k="cantidad" type="number" inputmode="decimal" min="0" step="any" value="${esc(l.cantidad ?? 1)}" aria-label="Cantidad">
+      <input class="inp" data-k="precio" type="number" inputmode="decimal" min="0" step="any" value="${esc(l.precio ?? '')}" placeholder="Precio c/u" aria-label="Precio unitario">
+      <button type="button" class="x" data-k="del" aria-label="Quitar">✕</button>
+    </div>
+    <input class="inp ${sel === 'libre' ? '' : 'hidden'}" data-k="nombre" placeholder="Nombre del producto" value="${esc(sel === 'libre' ? l.nombre : '')}" style="margin-top:-2px">
+    <input type="hidden" data-k="costo" value="${esc(l.costo ?? 0)}">
+  </div>`;
+}
+function openOrder(id, recetaId){
+  const f = $('#formOrd'); clearErrs(f); f.reset();
+  const o = id ? S.pedidos.find(x => x.id === id) : null; editingOrder = o ? o.id : null;
+  $('#ordTitle').textContent = o ? 'Pedido ' + o.folio : 'Nuevo pedido';
+  $('#ordDel').classList.toggle('hidden', !o);
+  f.cliente.value = o?.cliente || ''; f.telefono.value = o?.telefono || '';
+  f.fecha.value = o?.fecha || addDays(todayStr(), 1); f.hora.value = o?.hora || '12:00';
+  f.extra.value = o?.extra || ''; f.anticipo.value = o?.anticipo || ''; f.estado.value = o?.estado || 'pendiente'; f.notas.value = o?.notas || '';
+  let items = o?.items?.length ? o.items : [{cantidad:1}];
+  if(!o && recetaId){ const c = costRecipe(recById(recetaId)); items = [{recetaId, modo:'r', cantidad:1, precio:c.precioReceta, costo:c.total, nombre:recById(recetaId).nombre + ' (completo)'}]; }
+  $('#ordLines').innerHTML = items.map(ordLineHtml).join('');
+  calcOrder(); openDlg($('#dlgOrd'));
+}
+$('#ordAddLine').onclick = () => { $('#ordLines').insertAdjacentHTML('beforeend', ordLineHtml({cantidad:1})); calcOrder(); };
+$('#ordLines').addEventListener('change', e => {
+  const w = e.target.closest('.oline-wrap'); if(!w) return;
+  if(e.target.dataset.k === 'prod'){
+    const v = e.target.value; const nm = $('[data-k=nombre]', w);
+    nm.classList.toggle('hidden', v !== 'libre');
+    if(v && v !== 'libre'){
+      const [rid, modo] = v.split('|'); const r = recById(rid); const c = costRecipe(r);
+      $('[data-k=precio]', w).value = modo === 'p' ? c.precioPorcion : c.precioReceta;
+      $('[data-k=costo]', w).value = (modo === 'p' ? c.porcion : c.total).toFixed(4);
+    } else if(v === 'libre'){ $('[data-k=costo]', w).value = 0; nm.focus(); }
+  }
+  calcOrder();
+});
+$('#ordLines').addEventListener('input', calcOrder);
+$('#ordLines').addEventListener('click', e => { if(e.target.closest('[data-k=del]')){ const all = $$('.oline-wrap', $('#ordLines')); if(all.length > 1) e.target.closest('.oline-wrap').remove(); else toast('El pedido necesita al menos un producto', 'bad'); calcOrder(); } });
+['extra','anticipo'].forEach(n => $('#formOrd')[n].addEventListener('input', calcOrder));
+function readOrderLines(){
+  return $$('.oline-wrap', $('#ordLines')).map(w => {
+    const v = $('[data-k=prod]', w).value; let recetaId = null, modo = null, nombre = '';
+    if(v && v !== 'libre'){ [recetaId, modo] = v.split('|'); const r = recById(recetaId); nombre = (r ? r.nombre : 'Producto') + (modo === 'p' ? ' (porción)' : ' (completo)'); }
+    else if(v === 'libre') nombre = $('[data-k=nombre]', w).value.trim();
+    return { recetaId, modo, nombre, cantidad: num($('[data-k=cantidad]', w).value), precio: num($('[data-k=precio]', w).value), costo: num($('[data-k=costo]', w).value), _el: w, _sel: v };
+  });
+}
+function calcOrder(){
+  const f = $('#formOrd'); const items = readOrderLines();
+  const t = orderTotals({items, extra: f.extra.value, anticipo: f.anticipo.value});
+  const gan = t.total - num(f.extra.value) - t.costo;
+  $('#ordCalc').innerHTML = `<div><span>Subtotal</span><b>${money(t.sub)}</b></div>${num(f.extra.value) ? `<div><span>Envío/extras</span><b>${money(num(f.extra.value))}</b></div>` : ''}
+    <div class="tot"><span>Total</span><span id="ordTotal">${money(t.total)}</span></div>
+    <div><span>Anticipo</span><b>${money(t.anticipo)}</b></div>
+    <div class="tot" style="color:var(--accent)"><span>Saldo por cobrar</span><span id="ordSaldo">${money(t.saldo)}</span></div>
+    <div style="color:var(--muted)"><span>Costo estimado · ganancia</span><span>${money(t.costo)} · ${money(gan)}</span></div>`;
+}
+$('#formOrd').addEventListener('submit', e => {
+  e.preventDefault(); const f = e.target; clearErrs(f); let bad = false;
+  if(!f.cliente.value.trim()){ setErr(f.cliente, 'Escribe el nombre del cliente'); bad = true; }
+  const tel = f.telefono.value.replace(/\D/g, '');
+  if(tel && tel.length < 10){ setErr(f.telefono, 'Debe tener al menos 10 dígitos'); bad = true; }
+  if(!f.fecha.value){ setErr(f.fecha, 'Elige la fecha de entrega'); bad = true; }
+  const items = readOrderLines();
+  items.forEach(l => {
+    if(!l._sel){ setErr($('[data-k=prod]', l._el), 'Elige un producto'); bad = true; }
+    else if(l._sel === 'libre' && !l.nombre){ setErr($('[data-k=nombre]', l._el), 'Escribe el producto'); bad = true; }
+    if(!(l.cantidad > 0)){ setErr($('[data-k=cantidad]', l._el), '> 0'); bad = true; }
+    if(l.precio < 0){ setErr($('[data-k=precio]', l._el), 'Precio inválido'); bad = true; }
+  });
+  const t = orderTotals({items, extra: f.extra.value, anticipo: f.anticipo.value});
+  if(num(f.anticipo.value) > t.total + 0.001){ setErr(f.anticipo, 'El anticipo no puede ser mayor al total'); bad = true; }
+  if(bad){ toast('Revisa los campos marcados', 'bad'); return; }
+  const data = { cliente: f.cliente.value.trim(), telefono: f.telefono.value.trim(), fecha: f.fecha.value, hora: f.hora.value, extra: num(f.extra.value), anticipo: num(f.anticipo.value), estado: f.estado.value, notas: f.notas.value.trim(),
+    items: items.map(({_el, _sel, ...l}) => l) };
+  if(editingOrder){ Object.assign(S.pedidos.find(x => x.id === editingOrder), data); }
+  else { S.folio = (S.folio || 0) + 1; S.pedidos.push({ id: uid(), folio: 'P-' + String(S.folio).padStart(4, '0'), creado: new Date().toISOString(), ...data }); }
+  S.iniciado = true;
+  if(save()){ closeDlg($('#dlgOrd')); render(); toast(editingOrder ? 'Pedido actualizado' : 'Pedido guardado'); }
+});
+$('#ordDel').onclick = async () => {
+  if(!(await confirmar('Eliminar pedido', 'Se borrará este pedido. Si solo no se hizo, mejor márcalo como Cancelado.', 'Eliminar'))) return;
+  S.pedidos = S.pedidos.filter(o => o.id !== editingOrder); save(); closeDlg($('#dlgOrd')); render(); toast('Pedido eliminado');
+};
+
+/* ---------- Ticket ---------- */
+let ticketOrder = null;
+function openTicket(id){
+  const o = S.pedidos.find(x => x.id === id); if(!o) return; ticketOrder = o;
+  const txt = ticketText(o);
+  $('#ticketPrev').textContent = txt.replace(/\*/g, '');
+  $('#tkWa').href = waLink(o.telefono, txt);
+  openDlg($('#dlgTicket'));
+}
+$('#tkCopy').onclick = () => ticketOrder && copiar(ticketText(ticketOrder));
+$('#tkPrint58').onclick = () => printTicket('58');
+$('#tkPrintA4').onclick = () => printTicket('a4');
+function printTicket(size){
+  const o = ticketOrder; if(!o) return; const t = orderTotals(o); const a4 = size === 'a4';
+  const rows = (o.items || []).map(l => a4
+    ? `<tr><td>${esc(l.nombre)}</td><td class="n">${num(l.cantidad)}</td><td class="n">${money(num(l.precio))}</td><td class="n">${money(num(l.cantidad) * num(l.precio))}</td></tr>`
+    : `<tr><td>${num(l.cantidad)} × ${esc(l.nombre)}</td><td class="n">${money(num(l.cantidad) * num(l.precio))}</td></tr>`).join('');
+  const logo = S.cfg.logo ? `<img class="lg" src="${esc(S.cfg.logo)}" alt="">` : '';
+  $('#printArea').innerHTML = `<div class="rcpt ${a4 ? 'a4' : 'w58'}">
+    ${logo}<h1>${esc(S.cfg.negocio || 'Mi repostería')}</h1>
+    ${S.cfg.telefono ? `<div class="c">WhatsApp: ${esc(S.cfg.telefono)}</div>` : ''}
+    <hr><div>Pedido: <b>${esc(o.folio)}</b></div><div>Cliente: ${esc(o.cliente)}</div>
+    <div>Entrega: ${esc(fechaCorta(o.fecha))}${o.hora ? ', ' + hora12(o.hora) : ''}</div><hr>
+    <table>${a4 ? '<tr><th>Producto</th><th class="n">Cant.</th><th class="n">Precio</th><th class="n">Importe</th></tr>' : ''}${rows}
+    ${num(o.extra) ? `<tr><td${a4 ? ' colspan="3"' : ''}>Envío/extras</td><td class="n">${money(num(o.extra))}</td></tr>` : ''}</table><hr>
+    <table><tr class="big"><td>TOTAL</td><td class="n">${money(t.total)}</td></tr><tr><td>Anticipo</td><td class="n">${money(t.anticipo)}</td></tr><tr class="big"><td>SALDO</td><td class="n">${money(t.saldo)}</td></tr></table>
+    ${o.notas ? `<hr><div>Notas: ${esc(o.notas)}</div>` : ''}
+    ${S.cfg.pie ? `<hr><div class="c">${esc(S.cfg.pie)}</div>` : ''}
+    <div class="c" style="font-size:80%;margin-top:2mm">${new Date().toLocaleString('es-MX')}</div></div>`;
+  let page = '@page{size:A4;margin:15mm}';
+  if(!a4){ // alto exacto del ticket para impresoras de rollo de 58 mm
+    const pa = $('#printArea'); pa.style.cssText = 'display:block;position:fixed;left:-9999px;top:0;background:#fff';
+    const hmm = Math.ceil(pa.firstElementChild.getBoundingClientRect().height * 25.4 / 96) + 12; pa.style.cssText = '';
+    page = '@page{size:58mm ' + Math.max(60, hmm) + 'mm;margin:4mm 3mm}';
+  }
+  $('#pageStyle').textContent = page;
+  setTimeout(() => window.print(), 50);
+}
+window.__dcPrintTicket = (id, size) => { ticketOrder = S.pedidos.find(x => x.id === id); const p = window.print; window.print = () => {}; printTicket(size); setTimeout(() => window.print = p, 100); };
+
+/* ---------- RECETAS ---------- */
+function renderRecetas(){
+  if(!S.recetas.length){ $('#recipeList').innerHTML = `<div class="empty"><div class="big">🎂</div>Aún no tienes recetas.${S.ingredientes.length ? '' : '<br>Primero agrega tus ingredientes en <b>Insumos</b>.'}<br><button class="btn sm primary" style="margin-top:10px" onclick="document.getElementById('btnNewRecipe').click()">+ Nueva receta</button></div>`; return; }
+  $('#recipeList').innerHTML = S.recetas.map(r => { const c = costRecipe(r); return `<div class="item">
+    <div class="main"><div class="t">${esc(r.nombre)}</div>
+      <div class="m">Rinde ${c.rinde} · Costo ${money(c.total)} · ${money(c.porcion)}/porción</div>
+      ${c.errores ? `<div class="m" style="color:var(--bad);font-weight:600">⚠ ${c.errores} ingrediente(s) sin conversión</div>` : ''}
+      <div class="row wrap" style="gap:6px;margin-top:8px"><button class="btn sm" data-act="edit-rec" data-id="${r.id}">Ver / editar</button><button class="btn sm" data-act="order-rec" data-id="${r.id}">+ Pedido</button><button class="btn sm ghost" data-act="dup-rec" data-id="${r.id}">Duplicar</button></div></div>
+    <div class="r"><small class="m">Vender en</small><div><b style="font-size:18px">${money0(c.precioReceta)}</b></div><div class="m">${money0(c.precioPorcion)} c/porción</div></div></div>`; }).join('');
+}
+let editingRec = null;
+function recLineHtml(l){
+  const ingOpts = S.ingredientes.slice().sort((a, b) => a.nombre.localeCompare(b.nombre)).map(i => `<option value="${i.id}"${i.id === l.ingId ? ' selected' : ''}>${esc(i.nombre)}</option>`).join('');
+  return `<div class="line-row"><select class="inp" data-k="ingId" aria-label="Ingrediente"><option value="">— Ingrediente —</option>${ingOpts}</select>
+    <input class="inp" data-k="cantidad" type="number" inputmode="decimal" step="any" min="0" value="${esc(l.cantidad ?? '')}" placeholder="Cant." aria-label="Cantidad">
+    <select class="inp" data-k="unidad" aria-label="Unidad">${unitOpts(l.unidad || 'g')}</select>
+    <button type="button" class="x" data-k="del" aria-label="Quitar">✕</button><div class="cost"></div></div>`;
+}
+function readRecLines(){ return $$('.line-row', $('#recLines')).map(w => ({ ingId: $('[data-k=ingId]', w).value, cantidad: num($('[data-k=cantidad]', w).value), unidad: $('[data-k=unidad]', w).value, _el: w })); }
+function openRecipe(id){
+  if(!S.ingredientes.length){ toast('Primero agrega ingredientes en Insumos', 'bad'); go('insumos'); return; }
+  const f = $('#formRec'); clearErrs(f); f.reset();
+  const r = id ? recById(id) : null; editingRec = r ? r.id : null;
+  $('#recTitle').textContent = r ? 'Editar receta' : 'Nueva receta'; $('#recDel').classList.toggle('hidden', !r);
+  f.nombre.value = r?.nombre || ''; f.rinde.value = r?.rinde || ''; f.margen.value = r?.margen ?? '';
+  f.minTrabajo.value = r?.minTrabajo ?? ''; f.minHorno.value = r?.minHorno ?? ''; f.empaque.value = r?.empaque ?? ''; f.empaqueModo.value = r?.empaqueModo || 'receta';
+  f.margen.placeholder = 'Ajustes: ' + num(S.cfg.margen) + '%';
+  $('#recLines').innerHTML = (r?.items?.length ? r.items : [{}, {}]).map(recLineHtml).join('');
+  calcRec(); openDlg($('#dlgRec'));
+}
+$('#btnNewRecipe').onclick = () => openRecipe();
+$('#recAddLine').onclick = () => { $('#recLines').insertAdjacentHTML('beforeend', recLineHtml({})); };
+$('#recLines').addEventListener('click', e => { if(e.target.closest('[data-k=del]')){ e.target.closest('.line-row').remove(); calcRec(); } });
+$('#recLines').addEventListener('change', e => {
+  if(e.target.dataset.k === 'ingId'){ // sugerir unidad compatible
+    const ing = ingById(e.target.value); const u = $('[data-k=unidad]', e.target.closest('.line-row'));
+    if(ing && UNITS[u.value].d !== UNITS[ing.unidad].d) u.value = ({kg:'g', g:'g', L:'ml', ml:'ml', taza:'taza', cda:'cda', cdita:'cdita', pieza:'pieza'})[ing.unidad];
+  }
+  calcRec();
+});
+$('#formRec').addEventListener('input', calcRec);
+function recFromForm(){
+  const f = $('#formRec');
+  return { nombre: f.nombre.value.trim(), rinde: Math.round(num(f.rinde.value)), margen: f.margen.value === '' ? '' : num(f.margen.value),
+    minTrabajo: num(f.minTrabajo.value), minHorno: num(f.minHorno.value), empaque: num(f.empaque.value), empaqueModo: f.empaqueModo.value,
+    items: readRecLines().filter(l => l.ingId).map(({_el, ...l}) => l) };
+}
+function calcRec(){
+  readRecLines().forEach(l => { const box = $('.cost', l._el); if(!l.ingId){ box.textContent = ''; return; } const c = lineCost(l); box.className = 'cost' + (c.err ? ' bad' : ''); box.textContent = c.err ? '⚠ ' + c.err : '≈ ' + money(c.cost); });
+  const r = recFromForm(); const c = costRecipe(r);
+  $('#recCalc').innerHTML = `<div class="card breakdown" style="box-shadow:none;margin-top:6px">
+    <div><span>Ingredientes</span><b>${money(c.ingredientes)}</b></div>
+    <div><span>Tu trabajo (${num(r.minTrabajo)} min × ${money0(num(S.cfg.tarifaHora))}/h)</span><b>${money(c.manoObra)}</b></div>
+    <div><span>Gas/luz horno (${num(r.minHorno)} min)</span><b>${money(c.horno)}</b></div>
+    <div><span>Empaque</span><b>${money(c.empaque)}</b></div>
+    <div class="tot"><span>Costo total</span><span id="recTotal">${money(c.total)}</span></div>
+    <div><span>Costo por porción (÷ ${c.rinde})</span><b id="recPorcion">${money(c.porcion)}</b></div></div>
+    <div class="price-hero"><small>Precio sugerido con ${c.margenPct}% de margen</small>
+      <div class="grid g2" style="margin-top:6px"><div><small>Receta completa</small><b id="recPrecio">${money(c.precioReceta)}</b></div><div><small>Por porción</small><b id="recPrecioP">${money(c.precioPorcion)}</b></div></div>
+      <small>Ganas ${money(c.precioReceta - c.total)} limpios además de tu sueldo por hora.</small></div>`;
+}
+$('#formRec').addEventListener('submit', e => {
+  e.preventDefault(); const f = e.target; clearErrs(f); let bad = false;
+  const r = recFromForm();
+  if(!r.nombre){ setErr(f.nombre, 'Ponle nombre a la receta'); bad = true; }
+  if(!(r.rinde >= 1)){ setErr(f.rinde, 'Debe rendir al menos 1'); bad = true; }
+  if(f.margen.value !== '' && (num(f.margen.value) < 0 || num(f.margen.value) > 90)){ setErr(f.margen, 'Entre 0 y 90'); bad = true; }
+  const lines = readRecLines();
+  if(!lines.some(l => l.ingId)){ setErr($('[data-k=ingId]', lines[0]?._el) || f.nombre, 'Agrega al menos un ingrediente'); bad = true; }
+  lines.forEach(l => { if(l.ingId && !(l.cantidad > 0)){ setErr($('[data-k=cantidad]', l._el), '> 0'); bad = true; } });
+  if(bad){ toast('Revisa los campos marcados', 'bad'); return; }
+  if(editingRec) Object.assign(recById(editingRec), r); else S.recetas.push({ id: uid(), ...r });
+  S.iniciado = true; if(save()){ closeDlg($('#dlgRec')); render(); toast('Receta guardada'); }
+});
+$('#recDel').onclick = async () => {
+  if(!(await confirmar('Eliminar receta', 'Los pedidos que ya tienes no se borran.', 'Eliminar'))) return;
+  S.recetas = S.recetas.filter(r => r.id !== editingRec); save(); closeDlg($('#dlgRec')); render(); toast('Receta eliminada');
+};
+
+/* ---------- INSUMOS ---------- */
+$('#ingSearch').oninput = () => renderInsumos();
+function perUnitLabel(ing){
+  const u = ing.unidad, p = pricePer(ing);
+  if(u === 'g') return money(p * 1000) + ' por kg'; if(u === 'ml') return money(p * 1000) + ' por litro';
+  return money(p) + ' por ' + UNITS[u].label;
+}
+function usedIn(id){ return S.recetas.filter(r => (r.items || []).some(l => l.ingId === id)).length; }
+function renderInsumos(){
+  const hasKey = !!localStorage.getItem(KEY_AI);
+  $('#aiStatus').textContent = hasKey ? 'Activado ✓ · Toma foto a tu ticket del súper y actualiza precios.' : 'Opcional: actívalo en Ajustes con tu clave de Gemini para leer tickets.';
+  const q = $('#ingSearch').value.trim().toLowerCase();
+  const list = S.ingredientes.filter(i => !q || i.nombre.toLowerCase().includes(q)).sort((a, b) => a.nombre.localeCompare(b.nombre));
+  $('#ingList').innerHTML = list.length ? list.map(i => `<div class="item" data-act="edit-ing" data-id="${i.id}" style="cursor:pointer">
+    <div class="main"><div class="t">${esc(i.nombre)}</div><div class="m">${num(i.cantidad)} ${esc(UNITS[i.unidad]?.label || i.unidad)} por ${money(num(i.precio))}${i.actualizado ? ' · ' + new Date(i.actualizado).toLocaleDateString('es-MX', {day:'numeric', month:'short'}) : ''}</div>
+    ${usedIn(i.id) ? `<div class="m">En ${usedIn(i.id)} receta(s)</div>` : ''}</div>
+    <div class="r"><b>${perUnitLabel(i)}</b></div></div>`).join('') :
+    `<div class="empty"><div class="big">🥚</div>${S.ingredientes.length ? 'Sin resultados.' : 'Agrega lo que compras: harina, huevo, mantequilla…'}<br><button class="btn sm primary" style="margin-top:10px" onclick="document.getElementById('btnNewIng').click()">+ Nuevo ingrediente</button></div>`;
+}
+let editingIng = null;
+function openIng(id){
+  const f = $('#formIng'); clearErrs(f); f.reset(); const i = id ? ingById(id) : null; editingIng = i ? i.id : null;
+  $('#ingTitle').textContent = i ? 'Editar ingrediente' : 'Nuevo ingrediente'; $('#ingDel').classList.toggle('hidden', !i);
+  f.unidad.innerHTML = unitOpts(i?.unidad || 'kg');
+  f.nombre.value = i?.nombre || ''; f.cantidad.value = i?.cantidad ?? ''; f.precio.value = i?.precio ?? ''; f.gTaza.value = i?.gTaza || ''; f.gPieza.value = i?.gPieza || ''; $('details', f).open = !!(i?.gTaza || i?.gPieza);
+  ingPreview(); openDlg($('#dlgIng'));
+}
+function ingPreview(){
+  const f = $('#formIng'); const t = { cantidad: f.cantidad.value, precio: f.precio.value, unidad: f.unidad.value };
+  $('#ingPerUnit').textContent = num(t.cantidad) > 0 && num(t.precio) > 0 ? 'Te sale en ' + perUnitLabel(t) : 'Escribe cuánto trae el paquete y cuánto pagaste.';
+}
+$('#formIng').addEventListener('input', ingPreview);
+$('#btnNewIng').onclick = () => openIng();
+$('#formIng').addEventListener('submit', e => {
+  e.preventDefault(); const f = e.target; clearErrs(f); let bad = false;
+  const nombre = f.nombre.value.trim();
+  if(!nombre){ setErr(f.nombre, 'Escribe el nombre'); bad = true; }
+  else if(S.ingredientes.some(i => i.nombre.toLowerCase() === nombre.toLowerCase() && i.id !== editingIng)){ setErr(f.nombre, 'Ya existe un ingrediente con ese nombre'); bad = true; }
+  if(!(num(f.cantidad.value) > 0)){ setErr(f.cantidad, 'Mayor a 0'); bad = true; }
+  if(!(num(f.precio.value) >= 0) || f.precio.value === ''){ setErr(f.precio, 'Escribe el precio'); bad = true; }
+  if(bad){ toast('Revisa los campos marcados', 'bad'); return; }
+  const data = { nombre, cantidad: num(f.cantidad.value), unidad: f.unidad.value, precio: num(f.precio.value), gTaza: num(f.gTaza.value) || '', gPieza: num(f.gPieza.value) || '', actualizado: new Date().toISOString() };
+  if(editingIng) Object.assign(ingById(editingIng), data); else S.ingredientes.push({ id: uid(), ...data });
+  S.iniciado = true; if(save()){ closeDlg($('#dlgIng')); render(); toast('Ingrediente guardado'); }
+});
+$('#ingDel').onclick = async () => {
+  const n = usedIn(editingIng);
+  if(!(await confirmar('Eliminar ingrediente', n ? `Se usa en ${n} receta(s); esas recetas mostrarán un aviso.` : 'Se eliminará de tu lista.', 'Eliminar'))) return;
+  S.ingredientes = S.ingredientes.filter(i => i.id !== editingIng); save(); closeDlg($('#dlgIng')); render(); toast('Ingrediente eliminado');
+};
+
+/* ---------- CUENTAS ---------- */
+function monthStats(m){
+  const list = S.pedidos.filter(o => (o.fecha || '').startsWith(m) && o.estado !== 'cancelado');
+  let ventas = 0, costo = 0, cobrado = 0; const prods = {};
+  list.forEach(o => { const t = orderTotals(o); ventas += t.total; costo += t.costo; cobrado += Math.min(t.anticipo, t.total);
+    (o.items || []).forEach(l => { const k = l.nombre || 'Producto'; prods[k] = prods[k] || {q:0, v:0}; prods[k].q += num(l.cantidad); prods[k].v += num(l.cantidad) * num(l.precio); }); });
+  return { list, ventas, costo, ganancia: ventas - costo, cobrado, porCobrar: ventas - cobrado, prods };
+}
+$('#monthPick').onchange = () => renderCuentas();
+$('#mPrev').onclick = () => shiftMonth(-1); $('#mNext').onclick = () => shiftMonth(1);
+function shiftMonth(n){ const [y, m] = ($('#monthPick').value || todayStr().slice(0, 7)).split('-').map(Number); const d = new Date(y, m - 1 + n, 1); $('#monthPick').value = d.getFullYear() + '-' + pad(d.getMonth() + 1); renderCuentas(); }
+function renderCuentas(){
+  if(!$('#monthPick').value) $('#monthPick').value = todayStr().slice(0, 7);
+  const m = $('#monthPick').value; const s = monthStats(m);
+  $('#monthStats').innerHTML = [['Ventas', money0(s.ventas), ''], ['Costo', money0(s.costo), ''], ['Ganancia', money0(s.ganancia), s.ganancia >= 0 ? 'color:var(--ok)' : 'color:var(--bad)'], ['Pedidos', s.list.length, ''],
+    ['Cobrado', money0(s.cobrado), ''], ['Por cobrar', money0(s.porCobrar), 'color:var(--accent)'], ['Margen real', s.ventas ? Math.round(s.ganancia / s.ventas * 100) + '%' : '—', ''], ['Ticket promedio', s.list.length ? money0(s.ventas / s.list.length) : '—', '']]
+    .map(([k, v, st]) => `<div class="card stat"><small>${k}</small><b style="${st}" data-stat="${k}">${v}</b></div>`).join('');
+  const weeks = [0, 0, 0, 0, 0]; s.list.forEach(o => { const d = +o.fecha.slice(8, 10); weeks[Math.min(4, Math.floor((d - 1) / 7))] += orderTotals(o).total; });
+  const mx = Math.max(1, ...weeks);
+  $('#weekBars').innerHTML = weeks.map((v, i) => `<div class="row" style="margin:8px 0"><span style="width:84px;font-size:13px;color:var(--muted)">Semana ${i + 1}</span><div class="bar" style="flex:1"><i style="width:${v / mx * 100}%"></i></div><b style="width:80px;text-align:right;font-size:14px">${money0(v)}</b></div>`).join('');
+  const top = Object.entries(s.prods).sort((a, b) => b[1].v - a[1].v).slice(0, 6);
+  $('#topProducts').innerHTML = top.length ? `<table class="t"><tr><th>Producto</th><th class="n">Cant.</th><th class="n">Vendido</th></tr>${top.map(([k, v]) => `<tr><td>${esc(k)}</td><td class="n">${v.q}</td><td class="n">${money0(v.v)}</td></tr>`).join('')}</table>` : '<div class="empty">Sin ventas este mes.</div>';
+}
+
+/* ---------- AJUSTES / RESPALDO ---------- */
+$('#btnSettings').onclick = openSettings;
+let pendingLogo = null;
+function openSettings(){
+  const f = $('#formSet'); clearErrs(f); f.reset(); pendingLogo = null;
+  ['negocio', 'telefono', 'tarifaHora', 'hornoHora', 'margen', 'pie'].forEach(k => f[k].value = S.cfg[k] ?? '');
+  f.redondeo.value = String(S.cfg.redondeo ?? 5); f.geminiKey.value = localStorage.getItem(KEY_AI) || '';
+  $('#logoDel').classList.toggle('hidden', !S.cfg.logo); openDlg($('#dlgSet'));
+}
+$('#formSet').logo.addEventListener('change', async e => {
+  const file = e.target.files[0]; if(!file) return;
+  try { pendingLogo = await resizeImage(file, 256, 'image/png'); toast('Logo listo, toca Guardar'); } catch(_){ toast('No se pudo leer la imagen', 'bad'); }
+});
+$('#logoDel').onclick = () => { S.cfg.logo = ''; save(); renderHeader(); $('#logoDel').classList.add('hidden'); toast('Logo quitado'); };
+$('#formSet').addEventListener('submit', e => {
+  e.preventDefault(); const f = e.target; clearErrs(f); let bad = false;
+  const m = num(f.margen.value);
+  if(f.margen.value === '' || m < 0 || m > 90){ setErr(f.margen, 'Entre 0 y 90'); bad = true; }
+  if(num(f.tarifaHora.value) < 0){ setErr(f.tarifaHora, 'No puede ser negativo'); bad = true; }
+  if(num(f.hornoHora.value) < 0){ setErr(f.hornoHora, 'No puede ser negativo'); bad = true; }
+  const tel = f.telefono.value.replace(/\D/g, ''); if(tel && tel.length < 10){ setErr(f.telefono, 'Al menos 10 dígitos'); bad = true; }
+  const key = f.geminiKey.value.trim(); if(key && !/^[A-Za-z0-9_\-]{20,}$/.test(key)){ setErr(f.geminiKey, 'La clave no parece válida'); bad = true; }
+  if(bad){ toast('Revisa los campos marcados', 'bad'); return; }
+  Object.assign(S.cfg, { negocio: f.negocio.value.trim(), telefono: f.telefono.value.trim(), tarifaHora: num(f.tarifaHora.value), hornoHora: num(f.hornoHora.value), margen: m, redondeo: num(f.redondeo.value), pie: f.pie.value.trim() });
+  if(pendingLogo) S.cfg.logo = pendingLogo;
+  if(key) localStorage.setItem(KEY_AI, key); else localStorage.removeItem(KEY_AI);
+  S.iniciado = true; if(save()){ closeDlg($('#dlgSet')); render(); setupPWA(); toast('Ajustes guardados'); }
+});
+function backupObj(){ return { app:'DulceCuenta', version:1, exportado:new Date().toISOString(), datos:S }; } // la clave de Gemini NO se incluye
+$('#bkJson').onclick = () => { download('dulcecuenta-respaldo-' + todayStr() + '.json', JSON.stringify(backupObj(), null, 2), 'application/json'); toast('Respaldo descargado'); };
+const csvCell = v => { const s = String(v ?? ''); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+const csv = rows => '\ufeff' + rows.map(r => r.map(csvCell).join(',')).join('\r\n');
+$('#bkCsvOrders').onclick = () => {
+  const rows = [['Folio', 'Cliente', 'Teléfono', 'Fecha entrega', 'Hora', 'Productos', 'Total', 'Anticipo', 'Saldo', 'Costo estimado', 'Ganancia', 'Estado', 'Notas']];
+  S.pedidos.forEach(o => { const t = orderTotals(o); rows.push([o.folio, o.cliente, o.telefono, o.fecha, o.hora, itemsText(o), t.total.toFixed(2), t.anticipo.toFixed(2), t.saldo.toFixed(2), t.costo.toFixed(2), (t.total - t.costo).toFixed(2), (ESTADOS[o.estado] || [o.estado])[0], o.notas || '']); });
+  download('dulcecuenta-pedidos-' + todayStr() + '.csv', csv(rows), 'text/csv;charset=utf-8'); toast('Pedidos exportados');
+};
+$('#bkCsvIng').onclick = () => {
+  const rows = [['Ingrediente', 'Cantidad', 'Unidad', 'Precio', 'Precio por unidad', 'Gramos por taza', 'Gramos por pieza']];
+  S.ingredientes.forEach(i => rows.push([i.nombre, i.cantidad, i.unidad, num(i.precio).toFixed(2), pricePer(i).toFixed(4), i.gTaza || '', i.gPieza || '']));
+  download('dulcecuenta-ingredientes-' + todayStr() + '.csv', csv(rows), 'text/csv;charset=utf-8'); toast('Ingredientes exportados');
+};
+$('#bkImport').onclick = () => $('#bkFile').click();
+$('#bkFile').onchange = async e => {
+  const file = e.target.files[0]; e.target.value = ''; if(!file) return;
+  try {
+    const obj = JSON.parse(await file.text()); const d = obj && obj.datos ? obj.datos : obj;
+    if(!d || !Array.isArray(d.ingredientes) || !Array.isArray(d.recetas) || !Array.isArray(d.pedidos)) throw new Error('formato');
+    const ok = await confirmar('Restaurar respaldo', `Se reemplazarán tus datos actuales por: ${d.ingredientes.length} ingredientes, ${d.recetas.length} recetas y ${d.pedidos.length} pedidos.`, 'Restaurar');
+    if(!ok) return; S = normalize(d); S.iniciado = true; save(); closeDlg($('#dlgSet')); render(); toast('Respaldo restaurado');
+  } catch(err){ toast('Ese archivo no es un respaldo de DulceCuenta', 'bad'); }
+};
+$('#bkClear').onclick = async () => {
+  const ok = await confirmar('Borrar todos los datos', 'Se borrarán ingredientes, recetas, pedidos y ajustes de este teléfono. Descarga un respaldo antes. Escribe BORRAR para confirmar.', 'Borrar todo', '<input class="inp" id="cfInput" placeholder="BORRAR" autocomplete="off">');
+  if(!ok) return; if(($('#cfInput')?.value || '').trim().toUpperCase() !== 'BORRAR'){ toast('No se borró: no escribiste BORRAR', 'bad'); return; }
+  localStorage.removeItem(KEY); S = blank(); closeDlg($('#dlgSet')); go('hoy'); toast('Datos borrados');
+};
+
+/* ---------- Demo ---------- */
+$('#btnStart').onclick = () => { S.iniciado = true; save(); openSettings(); };
+$('#btnDemo').onclick = () => { loadDemo(); toast('Ejemplo cargado: explora recetas y pedidos'); };
+function loadDemo(){
+  const I = (nombre, cantidad, unidad, precio, gTaza = '', gPieza = '') => ({ id: uid(), nombre, cantidad, unidad, precio, gTaza, gPieza, actualizado: new Date().toISOString() });
+  const ing = [I('Harina de trigo', 1, 'kg', 26, 125), I('Azúcar estándar', 1, 'kg', 32, 200), I('Huevo', 30, 'pieza', 95, '', 50), I('Mantequilla', 90, 'g', 24), I('Cocoa en polvo', 200, 'g', 58, 85),
+    I('Leche entera', 1, 'L', 28, 245), I('Aceite vegetal', 1, 'L', 45, 218), I('Polvo para hornear', 110, 'g', 22, 192), I('Queso crema', 190, 'g', 36), I('Vainilla', 250, 'ml', 40), I('Capacillos', 100, 'pieza', 35)];
+  const id = n => ing.find(i => i.nombre === n).id;
+  const rec = [
+    { id: uid(), nombre: 'Pastel de chocolate', rinde: 20, margen: '', minTrabajo: 120, minHorno: 50, empaque: 45, empaqueModo: 'receta', items: [
+      { ingId: id('Harina de trigo'), cantidad: 2.5, unidad: 'taza' }, { ingId: id('Azúcar estándar'), cantidad: 2, unidad: 'taza' }, { ingId: id('Cocoa en polvo'), cantidad: 0.75, unidad: 'taza' },
+      { ingId: id('Huevo'), cantidad: 4, unidad: 'pieza' }, { ingId: id('Leche entera'), cantidad: 1, unidad: 'taza' }, { ingId: id('Aceite vegetal'), cantidad: 120, unidad: 'ml' },
+      { ingId: id('Polvo para hornear'), cantidad: 2, unidad: 'cdita' }, { ingId: id('Mantequilla'), cantidad: 180, unidad: 'g' }, { ingId: id('Queso crema'), cantidad: 380, unidad: 'g' }, { ingId: id('Vainilla'), cantidad: 1, unidad: 'cda' }] },
+    { id: uid(), nombre: 'Cupcakes de vainilla', rinde: 12, margen: 45, minTrabajo: 60, minHorno: 22, empaque: 4, empaqueModo: 'porcion', items: [
+      { ingId: id('Harina de trigo'), cantidad: 250, unidad: 'g' }, { ingId: id('Azúcar estándar'), cantidad: 200, unidad: 'g' }, { ingId: id('Huevo'), cantidad: 3, unidad: 'pieza' },
+      { ingId: id('Mantequilla'), cantidad: 120, unidad: 'g' }, { ingId: id('Leche entera'), cantidad: 120, unidad: 'ml' }, { ingId: id('Vainilla'), cantidad: 2, unidad: 'cdita' },
+      { ingId: id('Polvo para hornear'), cantidad: 1, unidad: 'cdita' }, { ingId: id('Capacillos'), cantidad: 12, unidad: 'pieza' }] }
+  ];
+  S = blank(); S.iniciado = true; S.cfg.negocio = 'Dulces Mary'; S.cfg.telefono = '7751234567'; S.ingredientes = ing; S.recetas = rec;
+  const mk = (cliente, tel, dd, hora, ri, modo, cant, anticipo, estado, notas, extra = 0) => { const r = rec[ri]; const c = costRecipe(r); S.folio++;
+    return { id: uid(), folio: 'P-' + String(S.folio).padStart(4, '0'), creado: new Date().toISOString(), cliente, telefono: tel, fecha: addDays(todayStr(), dd), hora, extra, anticipo, estado, notas,
+      items: [{ recetaId: r.id, modo, nombre: r.nombre + (modo === 'p' ? ' (porción)' : ' (completo)'), cantidad: cant, precio: modo === 'p' ? c.precioPorcion : c.precioReceta, costo: modo === 'p' ? c.porcion : c.total }] }; };
+  S.pedidos = [mk('Ana López', '7759876543', 0, '17:00', 0, 'r', 1, 300, 'listo', 'Letrero: Feliz cumple Sofi'), mk('Carlos Pérez', '7751112233', 1, '11:00', 1, 'p', 24, 200, 'preparacion', 'Betún rosa', 40),
+    mk('Lupita Ramírez', '7754445566', 3, '13:30', 0, 'r', 2, 500, 'pendiente', 'Uno sin nuez'), mk('Rosa Hernández', '7757778899', -2, '10:00', 1, 'p', 12, 99999, 'entregado', '')];
+  S.pedidos[3].anticipo = orderTotals(S.pedidos[3]).total;
+  save(); render();
+}
+
+/* ---------- Motor Inteligente (Gemini, opcional) ---------- */
+function resizeImage(file, max, type = 'image/jpeg', q = 0.85){
+  return new Promise((res, rej) => { const img = new Image(); const url = URL.createObjectURL(file);
+    img.onload = () => { const k = Math.min(1, max / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      const x = c.getContext('2d'); if(type === 'image/jpeg'){ x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); } x.drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url); res(c.toDataURL(type, q)); };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('img')); }; img.src = url; });
+}
+async function gemini(parts, key){
+  const models = [S.cfg.geminiModel || 'gemini-3.5-flash-lite', 'gemini-flash-lite-latest'];
+  let lastErr;
+  for(const model of models){
+    const ctl = new AbortController(); const to = setTimeout(() => ctl.abort(), 45000);
+    try {
+      const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent', {
+        method: 'POST', signal: ctl.signal, headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        body: JSON.stringify({ contents: [{ role: 'user', parts }], generationConfig: { temperature: 0.1, responseMimeType: 'application/json' } }) });
+      clearTimeout(to);
+      if(r.status === 404){ lastErr = new Error('modelo'); continue; }
+      const j = await r.json().catch(() => ({}));
+      if(!r.ok){ const msg = j?.error?.message || ''; const e = new Error(r.status === 400 && /key/i.test(msg) ? 'clave' : r.status === 403 ? 'clave' : r.status === 429 ? 'limite' : 'servidor'); e.detail = msg; throw e; }
+      const txt = (j.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('');
+      if(!txt) throw new Error('vacio');
+      return txt;
+    } catch(e){ clearTimeout(to); if(e.name === 'AbortError') throw new Error('tiempo'); if(e instanceof TypeError) throw new Error('red'); throw e; }
+  }
+  throw lastErr || new Error('modelo');
+}
+const AI_ERR = { clave:'La clave de Gemini no es válida o no tiene permiso. Revísala en Ajustes.', limite:'Llegaste al límite gratis de Gemini por ahora. Intenta en un rato.', red:'Sin internet. Puedes capturar los precios a mano.', tiempo:'Gemini tardó demasiado. Intenta con una foto más clara.', modelo:'El modelo de Gemini no está disponible.', vacio:'No se pudo leer el ticket. Intenta con otra foto.', servidor:'Gemini no respondió bien. Intenta de nuevo.', json:'No se entendió la respuesta. Intenta con otra foto.' };
+$('#aiTest').onclick = async () => {
+  const key = $('#formSet').geminiKey.value.trim(); if(!key){ toast('Pega primero tu clave', 'bad'); return; }
+  if(!navigator.onLine){ toast(AI_ERR.red, 'bad'); return; }
+  $('#aiTest').disabled = true; $('#aiTest').textContent = 'Probando…';
+  try { await gemini([{ text: 'Responde solo {"ok":true}' }], key); toast('¡Clave funcionando! Motor Inteligente activo'); }
+  catch(e){ toast(AI_ERR[e.message] || 'No se pudo conectar con Gemini', 'bad'); }
+  finally { $('#aiTest').disabled = false; $('#aiTest').textContent = 'Probar clave'; }
+};
+$('#aiForget').onclick = () => { localStorage.removeItem(KEY_AI); $('#formSet').geminiKey.value = ''; toast('Clave borrada de este teléfono'); };
+$('#btnAiScan').onclick = () => {
+  if(!localStorage.getItem(KEY_AI)){ toast('Activa el Motor Inteligente en Ajustes (es opcional)', 'bad'); openSettings(); setTimeout(() => $('#formSet').geminiKey.focus(), 200); return; }
+  if(!navigator.onLine){ toast(AI_ERR.red, 'bad'); return; }
+  $('#ticketFile').click();
+};
+let aiItems = [];
+$('#ticketFile').onchange = async e => {
+  const file = e.target.files[0]; e.target.value = ''; if(file) await scanTicket(file);
+};
+async function scanTicket(file){
+  const key = localStorage.getItem(KEY_AI); if(!key) return;
+  const btn = $('#btnAiScan'); btn.disabled = true; btn.textContent = '⏳ Leyendo…';
+  try {
+    const dataUrl = await resizeImage(file, 1600, 'image/jpeg', 0.82); const b64 = dataUrl.split(',')[1];
+    const nombres = S.ingredientes.map(i => i.nombre);
+    const prompt = `Eres un asistente que lee tickets de supermercado de México. Extrae SOLO los productos que sirven para repostería (harina, azúcar, huevo, mantequilla, leche, crema, chocolate, cocoa, vainilla, polvo para hornear, frutas, empaques, capacillos, etc.).
+Para cada producto devuelve: "nombre_ticket" (como viene), "ingrediente" (si corresponde a uno de esta lista exacta, escribe el nombre exacto; si no, null): ${JSON.stringify(nombres)}, "nombre_sugerido" (nombre limpio en español, ej. "Harina de trigo"), "cantidad" (contenido del paquete, número; si compró varias piezas iguales usa el contenido de UNA), "unidad" (una de: g, kg, ml, L, pieza), "precio" (precio de UN paquete en pesos, número).
+Responde solo JSON: {"items":[{"nombre_ticket":"","ingrediente":null,"nombre_sugerido":"","cantidad":0,"unidad":"g","precio":0}]}. Si no es un ticket, responde {"items":[]}.`;
+    const txt = await gemini([{ text: prompt }, { inline_data: { mime_type: 'image/jpeg', data: b64 } }], key);
+    let parsed; try { parsed = JSON.parse(txt.replace(/^```json|```$/g, '').trim()); } catch(_){ throw new Error('json'); }
+    aiItems = (parsed.items || []).filter(it => it && num(it.precio) > 0 && num(it.cantidad) > 0 && UNITS[it.unidad]).map(it => {
+      const match = it.ingrediente ? S.ingredientes.find(i => i.nombre.toLowerCase() === String(it.ingrediente).toLowerCase()) : null;
+      return { ...it, cantidad: num(it.cantidad), precio: num(it.precio), matchId: match ? match.id : '' };
+    });
+    showAiReview();
+  } catch(e){ toast(AI_ERR[e.message] || 'No se pudo leer el ticket. Captura a mano.', 'bad'); }
+  finally { btn.disabled = false; btn.textContent = '📷 Leer ticket'; }
+}
+window.__dcScanTicket = scanTicket; // para pruebas automáticas
+function showAiReview(){
+  if(!aiItems.length){ toast('No encontré ingredientes de repostería en esa foto', 'bad'); return; }
+  const opts = sel => `<option value="">➕ Agregar como nuevo</option>` + S.ingredientes.map(i => `<option value="${i.id}"${i.id === sel ? ' selected' : ''}>${esc(i.nombre)}</option>`).join('');
+  $('#aiBody').innerHTML = `<p class="sub">Revisa antes de aplicar. Puedes corregir cualquier dato.</p>` + aiItems.map((it, k) => `<div class="card" style="box-shadow:none;padding:12px;margin-bottom:8px" data-ai="${k}">
+    <label class="row" style="gap:8px;font-weight:650"><input type="checkbox" data-k="on" checked style="width:20px;height:20px"> ${esc(it.nombre_ticket || it.nombre_sugerido)}</label>
+    <div class="grid g2" style="margin-top:8px"><select class="inp" data-k="match">${opts(it.matchId)}</select><input class="inp" data-k="nombre" value="${esc(it.nombre_sugerido || it.nombre_ticket || '')}" placeholder="Nombre"></div>
+    <div class="grid g3" style="margin-top:6px"><input class="inp" data-k="cantidad" type="number" step="any" value="${it.cantidad}"><select class="inp" data-k="unidad">${unitOpts(it.unidad)}</select><input class="inp" data-k="precio" type="number" step="any" value="${it.precio}"></div></div>`).join('');
+  openDlg($('#dlgAi'));
+}
+$('#aiApply').onclick = () => {
+  let upd = 0, add = 0;
+  $$('[data-ai]', $('#aiBody')).forEach(c => {
+    if(!$('[data-k=on]', c).checked) return;
+    const cantidad = num($('[data-k=cantidad]', c).value), precio = num($('[data-k=precio]', c).value), unidad = $('[data-k=unidad]', c).value, nombre = $('[data-k=nombre]', c).value.trim(), mid = $('[data-k=match]', c).value;
+    if(!(cantidad > 0) || !(precio > 0)) return;
+    if(mid){ Object.assign(ingById(mid), { cantidad, unidad, precio, actualizado: new Date().toISOString() }); upd++; }
+    else if(nombre){ S.ingredientes.push({ id: uid(), nombre, cantidad, unidad, precio, gTaza: '', gPieza: '', actualizado: new Date().toISOString() }); add++; }
+  });
+  S.iniciado = true; save(); closeDlg($('#dlgAi')); render(); toast(`Listo: ${upd} precio(s) actualizado(s), ${add} nuevo(s)`);
+};
+
+/* ---------- PWA instalable (manifest en data URI) ---------- */
+function iconPng(size){
+  const c = document.createElement('canvas'); c.width = c.height = size; const x = c.getContext('2d'); const s = size / 64;
+  x.fillStyle = '#c2416b'; x.beginPath(); if(x.roundRect) x.roundRect(0, 0, size, size, 14 * s); else x.rect(0, 0, size, size); x.fill();
+  x.fillStyle = '#ffd6e3'; x.beginPath(); x.moveTo(14 * s, 40 * s); x.bezierCurveTo(14 * s, 30 * s, 50 * s, 30 * s, 50 * s, 40 * s); x.fill();
+  x.fillStyle = '#fff'; x.fillRect(14 * s, 40 * s, 36 * s, 14 * s); x.beginPath(); x.arc(32 * s, 20 * s, 5 * s, 0, Math.PI * 2); x.fill();
+  return c.toDataURL('image/png');
+}
+function setupPWA(){
+  try {
+    const i192 = iconPng(192), i512 = iconPng(512);
+    const base = location.href.split('#')[0].split('?')[0];
+    const man = { name: (S.cfg.negocio ? S.cfg.negocio + ' · ' : '') + 'DulceCuenta', short_name: 'DulceCuenta', description: 'Costeo de recetas y pedidos para reposteras', lang: 'es-MX',
+      start_url: base, scope: base.replace(/[^/]*$/, ''), display: 'standalone', orientation: 'portrait', background_color: '#faf6f4', theme_color: '#c2416b',
+      icons: [{ src: i192, sizes: '192x192', type: 'image/png', purpose: 'any maskable' }, { src: i512, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }] };
+    $('#manifestLink').href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(man));
+    $('#appleIcon').href = i192;
+  } catch(e){ console.warn('PWA', e); }
+}
+setupPWA();
+if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){ // opcional: si existe sw.js junto al archivo, la app abre sin internet una vez instalada
+  fetch('sw.js', { method: 'HEAD' }).then(r => { if(r.ok) navigator.serviceWorker.register('sw.js').catch(() => {}); }).catch(() => {});
+}
+
+/* ---------- Inicio ---------- */
+window.addEventListener('storage', e => { if(e.key === KEY){ S = load(); render(); } });
+go('hoy');
+})();
+</script>
+</body>
+</html>
